@@ -1,10 +1,8 @@
 package org.tensorflow.lite.examples.facerecognition;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -27,6 +25,8 @@ public class OverlayView extends View {
     private Paint textBackgroundPaint = new Paint();
     private Paint textPaint = new Paint();
     private Float scaleFactor = 1.0f;
+    private int rotatedImageWidth;
+    private int rotatedImageHeight;
     private Rect textBounds = new Rect();
 
     public OverlayView(Context context, @Nullable AttributeSet attrs) {
@@ -62,15 +62,22 @@ public class OverlayView extends View {
 
         for (RecognizedFace result : results) {
             RectF boundingBox = new RectF(result.face.getBoundingBox());
-            //            Log.i(TAG, boundingBox.toString());
+            Log.i(TAG, boundingBox.toString());
             //            Log.i(TAG, "top: " + boundingBox.top + ", left: " + boundingBox.left + ", bottom: " + boundingBox.bottom + ", right: " + boundingBox.right);
 
-            float left = boundingBox.left * scaleFactor;;
-            float top = boundingBox.top * scaleFactor;;
-            float width = boundingBox.width() * scaleFactor;
-            float height = boundingBox.height() * scaleFactor;
+            float top = boundingBox.top * scaleFactor;
+            float bottom = boundingBox.bottom * scaleFactor;
+            float left, right;
+            if (MyAppConfig.CAMERA_LENS_FACING == CameraSelector.LENS_FACING_BACK) {
+                left = boundingBox.left * scaleFactor;
+                right = boundingBox.right * scaleFactor;
+            } else {
+                left = (rotatedImageWidth - boundingBox.right) * scaleFactor;
+                top = boundingBox.top * scaleFactor;
+                right = (rotatedImageWidth - boundingBox.left) * scaleFactor;
+            }
             // Draw bounding box around detected objects
-            RectF drawableRect = new RectF(left, top, left + width, top + height);
+            RectF drawableRect = new RectF(left, top, right, bottom);
 
             canvas.drawRect(drawableRect, boxPaint);
 
@@ -97,19 +104,20 @@ public class OverlayView extends View {
 
     public void setResults(List<RecognizedFace> detectionResults, int rotationDegree) {
         results = detectionResults;
-//        Log.i(TAG, "Rotation degree: " + rotationDegree);
+        //        Log.i(TAG, "Rotation degree: " + rotationDegree);
         //                Log.i(TAG, "View: (" + getWidth() + "," + getHeight() + ")");
         //        Log.i(TAG, "Image: (" + imageWidth + "," + imageHeight + ")");
 
         // PreviewView is in FILL_START mode. So we need to scale up the bounding box to match with
         // the size that the captured images will be displayed.
-        int imageWidth = MyAppConfig.CAMERA_IMAGE_WIDTH;
-        int imageHeight = MyAppConfig.CAMERA_IMAGE_HEIGHT;
         if (rotationDegree == 0 || rotationDegree == 180) {
-            scaleFactor = Math.max(getWidth() * 1f / imageWidth, getHeight() * 1f / imageHeight);
+            rotatedImageWidth = MyAppConfig.CAMERA_IMAGE_WIDTH;
+            rotatedImageHeight = MyAppConfig.CAMERA_IMAGE_HEIGHT;
         } else {
-            scaleFactor = Math.max(getWidth() * 1f / imageHeight, getHeight() * 1f / imageWidth);
+            rotatedImageWidth = MyAppConfig.CAMERA_IMAGE_HEIGHT;
+            rotatedImageHeight = MyAppConfig.CAMERA_IMAGE_WIDTH;
         }
+        scaleFactor = Math.max(getWidth() * 1f / rotatedImageWidth, getHeight() * 1f / rotatedImageHeight);
     }
 }
 
