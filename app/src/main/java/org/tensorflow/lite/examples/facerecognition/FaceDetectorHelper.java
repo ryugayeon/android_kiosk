@@ -58,7 +58,7 @@ public class FaceDetectorHelper {
         Task<List<Face>> result = faceDetector.process(inputImage)
                 .addOnSuccessListener(
                         faces -> {
-                            long inferenceTime = SystemClock.uptimeMillis() - startTime;
+                            Log.i(TAG, "Detect time: " + (SystemClock.uptimeMillis() - startTime) + "ms");
                         }
                 )
                 .addOnFailureListener(

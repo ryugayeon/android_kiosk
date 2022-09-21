@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
 import android.util.Pair;
 
 import com.google.mlkit.vision.face.Face;
@@ -50,7 +49,7 @@ public class FaceRecognitionPipeline {
         // Detection
         long startTime = SystemClock.uptimeMillis();
         List<Face> faces = faceDetectorHelper.detect(image, imageRotation);
-        Log.i(TAG, faces.toString());
+        //        Log.i(TAG, faces.toString());
 
         // Recognition for each detected face
         List<RecognizedFace> recognizedFaces = new ArrayList<>();
@@ -61,12 +60,12 @@ public class FaceRecognitionPipeline {
             Rect boundingBox = face.getBoundingBox();
             //            Log.i(TAG, "BoundingBox: " + boundingBox);
             //            Log.i(TAG, "BoundingBox: w=" + boundingBox.width() + ", h=" + boundingBox.height());
-            Log.i(TAG, "Original: w=" + image.getWidth() + ", h=" + image.getHeight());
+            //            Log.i(TAG, "Original: w=" + image.getWidth() + ", h=" + image.getHeight());
 
             // Too small, discard
-//            if (boundingBox.width() < FaceEncoderHelper.INPUT_IMAGE_SIZE || boundingBox.height() < FaceEncoderHelper.INPUT_IMAGE_SIZE) {
-//                continue;
-//            }
+            //            if (boundingBox.width() < FaceEncoderHelper.INPUT_IMAGE_SIZE || boundingBox.height() < FaceEncoderHelper.INPUT_IMAGE_SIZE) {
+            //                continue;
+            //            }
 
             // Rotation image (always w=640, h=480) to sensor frame (depends on screen orientation), boundingBox is in this frame
             Matrix m = new Matrix();
@@ -87,7 +86,7 @@ public class FaceRecognitionPipeline {
                     FaceEncoderHelper.INPUT_IMAGE_SIZE,
                     FaceEncoderHelper.INPUT_IMAGE_SIZE,
                     false);
-            Log.i(TAG, "Scaled: w=" + scaledFaceBitmap.getWidth() + ", h=" + scaledFaceBitmap.getHeight());
+            //            Log.i(TAG, "Scaled: w=" + scaledFaceBitmap.getWidth() + ", h=" + scaledFaceBitmap.getHeight());
 
             // TODO: align face
 

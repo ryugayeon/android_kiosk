@@ -49,7 +49,7 @@ public class FaceEncoderHelper {
 
         startTime = SystemClock.uptimeMillis();
         FaceEmbedding embedding = faceEncoder.encode(image);
-        Log.i(TAG, "Encode time: " + (SystemClock.uptimeMillis() - startTime));
+        Log.i(TAG, "Encode time: " + (SystemClock.uptimeMillis() - startTime) + "ms");
 
         return embedding;
     }

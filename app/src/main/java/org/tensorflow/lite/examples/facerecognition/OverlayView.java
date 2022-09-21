@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -62,7 +61,7 @@ public class OverlayView extends View {
 
         for (RecognizedFace result : results) {
             RectF boundingBox = new RectF(result.face.getBoundingBox());
-            Log.i(TAG, boundingBox.toString());
+            //            Log.i(TAG, boundingBox.toString());
             //            Log.i(TAG, "top: " + boundingBox.top + ", left: " + boundingBox.left + ", bottom: " + boundingBox.bottom + ", right: " + boundingBox.right);
 
             float top = boundingBox.top * scaleFactor;

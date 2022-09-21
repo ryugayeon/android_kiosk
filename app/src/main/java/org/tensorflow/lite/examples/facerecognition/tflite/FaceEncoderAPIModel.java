@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FaceEncoderAPIModel implements FaceEncoder {
-    private static final String TAG = "FaceRecognizerAPIModel";
+    private static final String TAG = "FaceEncoderAPIModel";
     // Float model
     private static final float IMAGE_MEAN = 127.5f;
     private static final float IMAGE_STD = 128.0f;
@@ -90,7 +90,7 @@ public class FaceEncoderAPIModel implements FaceEncoder {
     @Override
     public FaceEmbedding encode(final Bitmap bitmap) {
         // Log this method so that it can be analyzed with systrace.
-        Trace.beginSection("recognizeImage");
+        Trace.beginSection("encodeFace");
 
         Trace.beginSection("preprocessBitmap");
         // Preprocess the image data from 0-255 int to normalized float based
@@ -129,12 +129,9 @@ public class FaceEncoderAPIModel implements FaceEncoder {
         tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
         Trace.endSection();
 
-        String id = "0";
-        String name = "UNKNOWN";
         FaceEmbedding embedding = new FaceEmbedding(outputEmbeddings[0]);
-        Log.i(TAG, embedding.toString());
 
-        Trace.endSection(); // "recognizeImage"
+        Trace.endSection(); // "encodeFace"
         return embedding;
     }
 
