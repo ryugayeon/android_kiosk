@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,7 +46,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import org.tensorflow.lite.examples.facerecognition.FaceDB;
 import org.tensorflow.lite.examples.facerecognition.FaceRecognitionPipeline;
-import org.tensorflow.lite.examples.facerecognition.MyAppConfig;
 import org.tensorflow.lite.examples.facerecognition.R;
 import org.tensorflow.lite.examples.facerecognition.RecognizedFace;
 import org.tensorflow.lite.examples.facerecognition.databinding.FragmentCameraBinding;
@@ -64,12 +62,13 @@ import java.util.concurrent.Executors;
  */
 public class CameraFragment extends Fragment
         implements FaceRecognitionPipeline.Listener {
-    private static final String TAG = "FaceDetection";
+    private static final String TAG = "CameraFragment";
     private FragmentCameraBinding fragmentCameraBinding;
     private FaceRecognitionPipeline faceRecognitionPipeline;
     private Bitmap bitmapBuffer;
     private ImageAnalysis imageAnalyzer;
     private ProcessCameraProvider cameraProvider;
+    private int lensFacing = CameraSelector.LENS_FACING_BACK;
     private final Object task = new Object();
     /**
      * Blocking camera operations are performed using this executor
@@ -117,6 +116,16 @@ public class CameraFragment extends Fragment
 
         // Set up the camera and its use cases
         fragmentCameraBinding.viewFinder.post(this::setUpCamera);
+
+        // Set up flip camera button
+        fragmentCameraBinding.flipCamera.setOnClickListener(imageButtonView -> {
+            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                lensFacing = CameraSelector.LENS_FACING_FRONT;
+            } else {
+                lensFacing = CameraSelector.LENS_FACING_BACK;
+            }
+            bindCameraUseCases();
+        });
     }
 
     @Override
@@ -145,11 +154,13 @@ public class CameraFragment extends Fragment
 
     // Declare and bind preview, capture and analysis use cases
     private void bindCameraUseCases() {
-        // CameraSelector - makes assumption that we're only using the back
-        // camera
+        // Must unbind the use-cases before rebinding them
+        cameraProvider.unbindAll();
+
+        // CameraSelector
         CameraSelector.Builder cameraSelectorBuilder = new CameraSelector.Builder();
         CameraSelector cameraSelector = cameraSelectorBuilder
-                .requireLensFacing(MyAppConfig.CAMERA_LENS_FACING).build();
+                .requireLensFacing(lensFacing).build();
 
         // Preview. Only using the 4:3 ratio because this is the closest to
         // our model
@@ -181,9 +192,6 @@ public class CameraFragment extends Fragment
             }
             recognizeFaces(imageProxy);
         });
-
-        // Must unbind the use-cases before rebinding them
-        cameraProvider.unbindAll();
 
         try {
             // A variable number of use-cases can be passed here -
@@ -235,7 +243,8 @@ public class CameraFragment extends Fragment
         // Pass necessary information to OverlayView for drawing on the canvas
         fragmentCameraBinding.overlay.setResults(
                 results,
-                rotationDegree
+                rotationDegree,
+                lensFacing
         );
 
         // Force a redraw

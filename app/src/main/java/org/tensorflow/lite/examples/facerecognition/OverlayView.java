@@ -26,6 +26,7 @@ public class OverlayView extends View {
     private Float scaleFactor = 1.0f;
     private int rotatedImageWidth;
     private int rotatedImageHeight;
+    private int lensFacing = CameraSelector.LENS_FACING_BACK;
     private Rect textBounds = new Rect();
 
     public OverlayView(Context context, @Nullable AttributeSet attrs) {
@@ -67,7 +68,7 @@ public class OverlayView extends View {
             float top = boundingBox.top * scaleFactor;
             float bottom = boundingBox.bottom * scaleFactor;
             float left, right;
-            if (MyAppConfig.CAMERA_LENS_FACING == CameraSelector.LENS_FACING_BACK) {
+            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
                 left = boundingBox.left * scaleFactor;
                 right = boundingBox.right * scaleFactor;
             } else {
@@ -101,8 +102,9 @@ public class OverlayView extends View {
         }
     }
 
-    public void setResults(List<RecognizedFace> detectionResults, int rotationDegree) {
+    public void setResults(List<RecognizedFace> detectionResults, int rotationDegree, int lensFacing) {
         results = detectionResults;
+        this.lensFacing = lensFacing;
         //        Log.i(TAG, "Rotation degree: " + rotationDegree);
         //                Log.i(TAG, "View: (" + getWidth() + "," + getHeight() + ")");
         //        Log.i(TAG, "Image: (" + imageWidth + "," + imageHeight + ")");

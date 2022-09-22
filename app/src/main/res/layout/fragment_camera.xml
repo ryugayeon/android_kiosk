@@ -25,6 +25,7 @@
         android:layout_height="match_parent"
         app:scaleType="fillStart" />
 
+
     <org.tensorflow.lite.examples.facerecognition.OverlayView
         android:id="@+id/overlay"
         android:layout_width="match_parent"
@@ -32,12 +33,22 @@
 
     <TextView
         android:id="@+id/inference_time_val"
-        android:padding="5dp"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
+        android:padding="5dp"
         android:textAlignment="center"
         android:textColor="@android:color/white" />
+
+    <ImageButton
+        android:id="@+id/flip_camera"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|end"
+        android:background="@android:color/transparent"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/flip_camera" />
 
     <!--    <include-->
     <!--        android:id="@+id/bottom_sheet_layout"-->
