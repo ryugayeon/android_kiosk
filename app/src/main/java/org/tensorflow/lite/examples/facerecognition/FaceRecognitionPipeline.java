@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.media.Image;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.mlkit.vision.face.Face;
@@ -21,6 +23,8 @@ public class FaceRecognitionPipeline {
     private FaceDB faceDB;
     private final Context context;
     private final Listener listener;
+    private boolean paused = true;
+
 
     public FaceRecognitionPipeline(Context context,
                                    Listener listener) {
@@ -40,12 +44,25 @@ public class FaceRecognitionPipeline {
         faceEncoderHelper = FaceEncoderHelper.create(context);
     }
 
+
+    public void stop() {
+        paused = true;
+    }
+
+    public void start() {
+        paused = false;
+    }
+
     public void clear() {
         faceDetectorHelper.clearFaceDetector();
         faceEncoderHelper.clearFaceEncoder();
     }
 
     public void process(Bitmap image, int imageRotation) {
+        if (paused) {
+            return;
+        }
+
         // Detection
         long startTime = SystemClock.uptimeMillis();
         List<Face> faces = faceDetectorHelper.detect(image, imageRotation);
@@ -104,12 +121,17 @@ public class FaceRecognitionPipeline {
         }
 
         long inferenceTime = SystemClock.uptimeMillis() - startTime;
+        Log.i(TAG, "Total time: " + inferenceTime + "ms");
         //        Log.i(TAG, "unknown faces: " + unknownFaces.size());
         if (unknownFaces.size() == 0) {
             listener.onFaceRecognitionPipelineResults(recognizedFaces, inferenceTime, imageRotation);
         } else {
-            if (!faceDB.getIsRegistering()) {
-                faceDB.setIsRegistering(true);
+//            if (!faceDB.getIsRegistering()) {
+//                faceDB.setIsRegistering(true);
+//                listener.onFaceRecognitionPipelineFoundUnknownFaces(unknownFaces, faceDB);
+//            }
+            if (!paused) {
+                stop();
                 listener.onFaceRecognitionPipelineFoundUnknownFaces(unknownFaces, faceDB);
             }
         }

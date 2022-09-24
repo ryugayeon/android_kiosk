@@ -16,10 +16,8 @@
 package org.tensorflow.lite.examples.facerecognition.fragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -33,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.AspectRatio;
+import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -66,6 +65,7 @@ public class CameraFragment extends Fragment
     private FragmentCameraBinding fragmentCameraBinding;
     private FaceRecognitionPipeline faceRecognitionPipeline;
     private Bitmap bitmapBuffer;
+    private Preview preview;
     private ImageAnalysis imageAnalyzer;
     private ProcessCameraProvider cameraProvider;
     private int lensFacing = CameraSelector.LENS_FACING_BACK;
@@ -80,13 +80,14 @@ public class CameraFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragmentCameraBinding = FragmentCameraBinding
-                .inflate(inflater, container, false);
+        Log.d(TAG, "⚽️ onCreateView");
+        fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false);
         return fragmentCameraBinding.getRoot();
     }
 
     @Override
     public void onResume() {
+        Log.d(TAG, "⚽️ onResume");
         super.onResume();
 
         if (!PermissionsFragment.hasPermission(requireContext())) {
@@ -98,7 +99,25 @@ public class CameraFragment extends Fragment
     }
 
     @Override
+    public void onStart() {
+        Log.d(TAG, "⚽️ onStart");
+        super.onStart();
+
+        faceRecognitionPipeline.start();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "⚽️ onStop");
+        super.onStop();
+
+        faceRecognitionPipeline.stop();
+    }
+
+    @Override
     public void onDestroyView() {
+        fragmentCameraBinding = null;
+        Log.d(TAG, "⚽️ onDestroyView");
         super.onDestroyView();
 
         // Shut down our background executor
@@ -110,30 +129,44 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "⚽️ onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         cameraExecutor = Executors.newSingleThreadExecutor();
         faceRecognitionPipeline = FaceRecognitionPipeline.create(requireContext(), this);
 
         // Set up the camera and its use cases
-        fragmentCameraBinding.viewFinder.post(this::setUpCamera);
-
-        // Set up flip camera button
-        fragmentCameraBinding.flipCamera.setOnClickListener(imageButtonView -> {
-            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
-                lensFacing = CameraSelector.LENS_FACING_FRONT;
-            } else {
-                lensFacing = CameraSelector.LENS_FACING_BACK;
-            }
-            bindCameraUseCases();
+        fragmentCameraBinding.viewFinder.post(() -> {
+            updateCameraUi();
+            setUpCamera();
         });
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        imageAnalyzer.setTargetRotation(
-                fragmentCameraBinding.viewFinder.getDisplay().getRotation()
-        );
+
+        bindCameraUseCases();
+
+        updateCameraSwitchButton();
+
+        //        imageAnalyzer.setTargetRotation(
+        //                fragmentCameraBinding.viewFinder.getDisplay().getRotation()
+        //        );
+    }
+
+    private void updateCameraUi() {
+        fragmentCameraBinding.cameraSwitchButton.setEnabled(false);
+
+        // Set up flip camera button
+        fragmentCameraBinding.cameraSwitchButton.setOnClickListener(imageButtonView -> {
+            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                lensFacing = CameraSelector.LENS_FACING_FRONT;
+            } else {
+                lensFacing = CameraSelector.LENS_FACING_BACK;
+            }
+            // Re-bind use cases to update selected camera
+            bindCameraUseCases();
+        });
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -144,6 +177,10 @@ public class CameraFragment extends Fragment
             try {
                 cameraProvider = cameraProviderFuture.get();
 
+                // Enable or disable switching between cameras
+                // https://github.com/android/camera-samples/blob/main/CameraXBasic/app/src/main/java/com/android/example/cameraxbasic/fragments/CameraFragment.kt#L251
+                updateCameraSwitchButton();
+
                 // Build and bind the camera use cases
                 bindCameraUseCases();
             } catch (ExecutionException | InterruptedException e) {
@@ -152,46 +189,37 @@ public class CameraFragment extends Fragment
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
+    private void updateCameraSwitchButton() {
+        fragmentCameraBinding.cameraSwitchButton.setEnabled(hasBackCamera() && hasFrontCamera());
+    }
+
+    private boolean hasBackCamera() {
+        try {
+            return cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA);
+        } catch (CameraInfoUnavailableException e) {
+            return false;
+        }
+    }
+
+    private boolean hasFrontCamera() {
+        try {
+            return cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA);
+        } catch (CameraInfoUnavailableException e) {
+            return false;
+        }
+    }
+
     // Declare and bind preview, capture and analysis use cases
     private void bindCameraUseCases() {
-        // Must unbind the use-cases before rebinding them
-        cameraProvider.unbindAll();
-
         // CameraSelector
         CameraSelector.Builder cameraSelectorBuilder = new CameraSelector.Builder();
         CameraSelector cameraSelector = cameraSelectorBuilder
                 .requireLensFacing(lensFacing).build();
 
-        // Preview. Only using the 4:3 ratio because this is the closest to
-        // our model
-        Preview preview = new Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(
-                        fragmentCameraBinding.viewFinder
-                                .getDisplay().getRotation()
-                )
-                .build();
+        setUpAnalyzer();
 
-        // ImageAnalysis. Using RGBA 8888 to match how our models work
-        Point point = new Point();
-        fragmentCameraBinding.viewFinder.getDisplay().getRealSize(point);
-        imageAnalyzer = new ImageAnalysis.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(fragmentCameraBinding.viewFinder.getDisplay().getRotation())
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                .build();
-
-        // The analyzer can then be assigned to the instance
-        imageAnalyzer.setAnalyzer(cameraExecutor, imageProxy -> {
-            if (bitmapBuffer == null) {
-                bitmapBuffer = Bitmap.createBitmap(
-                        imageProxy.getWidth(),
-                        imageProxy.getHeight(),
-                        Bitmap.Config.ARGB_8888);
-            }
-            recognizeFaces(imageProxy);
-        });
+        // Must unbind the use-cases before rebinding them
+        cameraProvider.unbindAll();
 
         try {
             // A variable number of use-cases can be passed here -
@@ -212,6 +240,34 @@ public class CameraFragment extends Fragment
         }
     }
 
+    private void setUpAnalyzer() {
+        // Preview. Only using the 4:3 ratio because this is the closest to
+        // our model
+        preview = new Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(fragmentCameraBinding.viewFinder.getDisplay().getRotation())
+                .build();
+
+        // ImageAnalysis. Using RGBA 8888 to match how our models work
+        imageAnalyzer = new ImageAnalysis.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(fragmentCameraBinding.viewFinder.getDisplay().getRotation())
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .build();
+
+        // The analyzer can then be assigned to the instance
+        imageAnalyzer.setAnalyzer(cameraExecutor, imageProxy -> {
+            if (bitmapBuffer == null) {
+                bitmapBuffer = Bitmap.createBitmap(
+                        imageProxy.getWidth(),
+                        imageProxy.getHeight(),
+                        Bitmap.Config.ARGB_8888);
+            }
+            recognizeFaces(imageProxy);
+        });
+    }
+
     private void recognizeFaces(@NonNull ImageProxy imageProxy) {
         // Copy out RGB bits to the shared bitmap buffer
         bitmapBuffer.copyPixelsFromBuffer(imageProxy.getPlanes()[0].getBuffer());
@@ -227,51 +283,64 @@ public class CameraFragment extends Fragment
 
     @Override
     public void onFaceRecognitionPipelineError(String error) {
-        requireActivity().runOnUiThread(() -> {
-            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-        });
+        try {
+            requireActivity().runOnUiThread(() -> {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            });
+        } catch (IllegalStateException e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     @Override
     public void onFaceRecognitionPipelineResults(List<RecognizedFace> results, long inferenceTime, int rotationDegree) {
+        try {
+            requireActivity().runOnUiThread(() -> {
+                if (fragmentCameraBinding == null) {
+                    return;
+                }
 
-        requireActivity().runOnUiThread(() -> {
-            fragmentCameraBinding.inferenceTimeVal
-                    .setText(String.format(Locale.US, "%d ms", inferenceTime));
-        });
+                fragmentCameraBinding.inferenceTimeVal
+                        .setText(String.format(Locale.US, "%d ms", inferenceTime));
 
-        // Pass necessary information to OverlayView for drawing on the canvas
-        fragmentCameraBinding.overlay.setResults(
-                results,
-                rotationDegree,
-                lensFacing
-        );
+                // Pass necessary information to OverlayView for drawing on the canvas
+                fragmentCameraBinding.overlay.setResults(
+                        results,
+                        rotationDegree,
+                        lensFacing
+                );
 
-        // Force a redraw
-        fragmentCameraBinding.overlay.invalidate();
+                // Force a redraw
+                fragmentCameraBinding.overlay.invalidate();
+            });
+        } catch (IllegalStateException e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     @Override
     public void onFaceRecognitionPipelineFoundUnknownFaces(List<Pair<Bitmap, FaceEmbedding>> unknownFaces, FaceDB db) {
-        requireActivity().runOnUiThread(() -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_register_face, null);
-            ImageView ivFace = dialogLayout.findViewById(R.id.dlg_image);
-            EditText etName = dialogLayout.findViewById(R.id.dlg_input);
-            ivFace.setImageBitmap(unknownFaces.get(0).first);
+        try {
+            requireActivity().runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_register_face, null);
+                ImageView ivFace = dialogLayout.findViewById(R.id.dlg_image);
+                EditText etName = dialogLayout.findViewById(R.id.dlg_input);
+                ivFace.setImageBitmap(unknownFaces.get(0).first);
 
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
+                builder.setPositiveButton("Ok", (dialog, id) -> {
                             db.register(etName.getText().toString(), unknownFaces.get(0).second);
-                            db.setIsRegistering(false);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            db.setIsRegistering(false);
-                        }
-                    })
-                    .setView(dialogLayout).show();
-        });
+                            //                            db.setIsRegistering(false);
+                            faceRecognitionPipeline.start();
+                        })
+                        .setNegativeButton("Cancel", (dialog, id) -> {
+                            //                            db.setIsRegistering(false);
+                            faceRecognitionPipeline.start();
+                        })
+                        .setView(dialogLayout).show();
+            });
+        } catch (IllegalStateException e) {
+            Log.e(TAG, e.toString());
+        }
     }
 }

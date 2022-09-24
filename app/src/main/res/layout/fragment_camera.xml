@@ -23,6 +23,7 @@
         android:id="@+id/view_finder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:implementationMode="performance"
         app:scaleType="fillStart" />
 
 
@@ -41,14 +42,14 @@
         android:textColor="@android:color/white" />
 
     <ImageButton
-        android:id="@+id/flip_camera"
+        android:id="@+id/camera_switch_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top|end"
         android:background="@android:color/transparent"
-        android:padding="5dp"
+        android:padding="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/flip_camera" />
+        android:src="@drawable/ic_switch" />
 
     <!--    <include-->
     <!--        android:id="@+id/bottom_sheet_layout"-->

@@ -2,6 +2,7 @@ package org.tensorflow.lite.examples.facerecognition;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -32,12 +33,11 @@ public class FaceDetectorHelper {
     }
 
     private void setupFaceDetector() {
-        FaceDetectorOptions options =
-                new FaceDetectorOptions.Builder()
-                        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-                        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-                        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-                        .build();
+        FaceDetectorOptions options = new FaceDetectorOptions.Builder()
+                .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+                .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+                .build();
 
         faceDetector = FaceDetection.getClient(options);
     }
@@ -52,10 +52,10 @@ public class FaceDetectorHelper {
 
         startTime = SystemClock.uptimeMillis();
 
-        InputImage inputImage = InputImage.fromBitmap(image, imageRotation);
+//        InputImage inputImage = InputImage.fromBitmap(image, imageRotation);
         //        Log.i(TAG, "Input image: height=" + inputImage.getHeight() + ", width=" + inputImage.getWidth());
 
-        Task<List<Face>> result = faceDetector.process(inputImage)
+        Task<List<Face>> task = faceDetector.process(image, imageRotation)
                 .addOnSuccessListener(
                         faces -> {
                             Log.i(TAG, "Detect time: " + (SystemClock.uptimeMillis() - startTime) + "ms");
@@ -68,8 +68,7 @@ public class FaceDetectorHelper {
                 );
 
         try {
-            Tasks.await(result);
-            return result.getResult();
+            return Tasks.await(task);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
             return new ArrayList<>();

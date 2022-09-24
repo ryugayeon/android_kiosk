@@ -55,7 +55,7 @@ public class FaceDB {
                 }
             }
         }
-        Log.i(TAG, "Min Distance: " + minDistance);
+//        Log.i(TAG, "Min Distance: " + minDistance);
 
         return p;
     }
