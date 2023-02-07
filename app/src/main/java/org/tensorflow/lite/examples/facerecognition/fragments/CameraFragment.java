@@ -16,6 +16,7 @@
 package org.tensorflow.lite.examples.facerecognition.fragments;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import org.tensorflow.lite.examples.facerecognition.FaceDB;
 import org.tensorflow.lite.examples.facerecognition.FaceRecognitionPipeline;
 import org.tensorflow.lite.examples.facerecognition.R;
 import org.tensorflow.lite.examples.facerecognition.RecognizedFace;
+import org.tensorflow.lite.examples.facerecognition.StartActivity;
 import org.tensorflow.lite.examples.facerecognition.databinding.FragmentCameraBinding;
 import org.tensorflow.lite.examples.facerecognition.tflite.FaceEmbedding;
 
@@ -68,20 +70,24 @@ public class CameraFragment extends Fragment
     private Preview preview;
     private ImageAnalysis imageAnalyzer;
     private ProcessCameraProvider cameraProvider;
-    private int lensFacing = CameraSelector.LENS_FACING_BACK;
+    private int lensFacing = CameraSelector.LENS_FACING_FRONT;
     private final Object task = new Object();
     /**
      * Blocking camera operations are performed using this executor
      */
     private ExecutorService cameraExecutor;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+
         Log.d(TAG, "⚽️ onCreateView");
         fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false);
+
         return fragmentCameraBinding.getRoot();
     }
 
@@ -146,13 +152,14 @@ public class CameraFragment extends Fragment
         super.onConfigurationChanged(newConfig);
 
         bindCameraUseCases();
-
         updateCameraSwitchButton();
 
         //        imageAnalyzer.setTargetRotation(
         //                fragmentCameraBinding.viewFinder.getDisplay().getRotation()
         //        );
     }
+
+
 
     private void updateCameraUi() {
         fragmentCameraBinding.cameraSwitchButton.setEnabled(false);
@@ -188,6 +195,7 @@ public class CameraFragment extends Fragment
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
+
 
     private void updateCameraSwitchButton() {
         fragmentCameraBinding.cameraSwitchButton.setEnabled(hasBackCamera() && hasFrontCamera());
@@ -318,6 +326,9 @@ public class CameraFragment extends Fragment
         }
     }
 
+
+    // 여기 수정 해야해
+    // 화면 전환
     @Override
     public void onFaceRecognitionPipelineFoundUnknownFaces(List<Pair<Bitmap, FaceEmbedding>> unknownFaces, FaceDB db) {
         try {
@@ -328,19 +339,14 @@ public class CameraFragment extends Fragment
                 EditText etName = dialogLayout.findViewById(R.id.dlg_input);
                 ivFace.setImageBitmap(unknownFaces.get(0).first);
 
-                builder.setPositiveButton("Ok", (dialog, id) -> {
-                            db.register(etName.getText().toString(), unknownFaces.get(0).second);
-                            //                            db.setIsRegistering(false);
-                            faceRecognitionPipeline.start();
-                        })
-                        .setNegativeButton("Cancel", (dialog, id) -> {
-                            //                            db.setIsRegistering(false);
-                            faceRecognitionPipeline.start();
-                        })
-                        .setView(dialogLayout).show();
+                Intent intent = new Intent(getActivity(), StartActivity.class);
+                startActivity(intent);
+
             });
         } catch (IllegalStateException e) {
             Log.e(TAG, e.toString());
         }
+
     }
+
 }
