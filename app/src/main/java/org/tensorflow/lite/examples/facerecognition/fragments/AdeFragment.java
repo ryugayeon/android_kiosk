@@ -16,47 +16,48 @@ import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
 
 import java.util.Locale;
 
-public class LatteFragment extends Fragment {
+public class AdeFragment extends Fragment {
     private TextToSpeech tts;
-    private Button button4;
+    private Button button7;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = (ViewGroup) inflater.inflate(
-                R.layout.fragment_latte, container, false);
+                R.layout.fragment_ade, container, false);
 
         tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                button4.setEnabled(true);
+                button7.setEnabled(true);
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
 
-                String text = "이";
+                String text = "오";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });
 
-        button4 = v.findViewById(R.id.button4);
-        button4.setOnClickListener(new View.OnClickListener() {
+        button7 = v.findViewById(R.id.button7);
+        button7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = "이";
+                String text = "오";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });
 
-        button4.setOnLongClickListener(new View.OnLongClickListener(){
+        button7.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
                 startActivity(intent);
 
+                //activity의 finish() 부분
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(LatteFragment.this).commit();
+                fragmentManager.beginTransaction().remove(AdeFragment.this).commit();
                 fragmentManager.popBackStack();
 
                 return true;  //true 설정

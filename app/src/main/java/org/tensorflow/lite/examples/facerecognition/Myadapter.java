@@ -5,9 +5,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import org.tensorflow.lite.examples.facerecognition.fragments.AdeFragment;
 import org.tensorflow.lite.examples.facerecognition.fragments.CoffeeFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DesertFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.JuiceFragment;
 import org.tensorflow.lite.examples.facerecognition.fragments.LatteFragment;
 import org.tensorflow.lite.examples.facerecognition.fragments.SmoothieFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.TeaFragment;
 
 
 public class Myadapter extends FragmentStateAdapter {
@@ -26,7 +30,11 @@ public class Myadapter extends FragmentStateAdapter {
 
         if(index==0) return new CoffeeFragment();
         else if(index==1) return new LatteFragment();
-        else return new SmoothieFragment();
+        else if(index==2) return new SmoothieFragment();
+        else if(index==3) return new TeaFragment();
+        else if(index==4) return new AdeFragment();
+        else if(index==5) return new JuiceFragment();
+        else return new DesertFragment();
     }
 
     @Override

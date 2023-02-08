@@ -15,7 +15,7 @@ public class SelectDrinkActivity extends FragmentActivity {
 
     private ViewPager2 mPager;
     private FragmentStateAdapter pagerAdapter;
-    private int num_page = 3;
+    private int num_page = 7;
     private CircleIndicator3 mIndicator;
 
     @Override
@@ -34,8 +34,9 @@ public class SelectDrinkActivity extends FragmentActivity {
         mIndicator.createIndicators(num_page,0);
         //ViewPager Setting
         mPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
-        mPager.setCurrentItem(1000);
-        mPager.setOffscreenPageLimit(3);
+
+        // mPager.setCurrentItem(1001);
+        mPager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
 
         mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -72,7 +73,5 @@ public class SelectDrinkActivity extends FragmentActivity {
                 }
             }
         });
-
     }
-
 }

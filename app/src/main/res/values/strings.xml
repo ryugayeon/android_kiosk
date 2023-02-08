@@ -39,7 +39,6 @@
     <string name="default_threshold">0.50</string>
     <string name="default_inference_time">0ms</string>
     <string name="default_max_results">3</string>
-
     <string-array name="delegate_spinner_titles">
         <item>CPU</item>
         <item>GPU</item>

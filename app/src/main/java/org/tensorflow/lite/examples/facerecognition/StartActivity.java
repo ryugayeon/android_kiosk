@@ -33,6 +33,7 @@ public class StartActivity extends AppCompatActivity {
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
 
+
                 handler.postDelayed(new Runnable()
                 {
                     @Override
