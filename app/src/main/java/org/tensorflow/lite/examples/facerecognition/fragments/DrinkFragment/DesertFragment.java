@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.facerecognition.fragments;
+package org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,47 +16,36 @@ import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
 
 import java.util.Locale;
 
-public class SmoothieFragment extends Fragment {
+public class DesertFragment extends Fragment {
     private TextToSpeech tts;
-    private Button button5;
+    private Button button9;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = (ViewGroup) inflater.inflate(
-                R.layout.fragment_smoothie, container, false);
+                R.layout.fragment_desert, container, false);
 
-        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                button5.setEnabled(true);
-                Locale locale = Locale.getDefault();
-                tts.setLanguage(locale);
 
-                String text = "삼";
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
-            }
-        });
-
-        button5 = v.findViewById(R.id.button5);
-        button5.setOnClickListener(new View.OnClickListener() {
+        button9 = v.findViewById(R.id.button9);
+        button9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = "삼";
+                String text = "칠";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });
 
-        button5.setOnLongClickListener(new View.OnLongClickListener(){
+        button9.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
                 startActivity(intent);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(SmoothieFragment.this).commit();
+                fragmentManager.beginTransaction().remove(DesertFragment.this).commit();
                 fragmentManager.popBackStack();
 
                 return true;  //true 설정
@@ -66,4 +55,29 @@ public class SmoothieFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                button9.setEnabled(true);
+                Locale locale = Locale.getDefault();
+                tts.setLanguage(locale);
+
+                String text = "디저트";
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(tts != null){
+            tts.stop();
+            tts.shutdown();
+            tts = null;
+        }
+    }
 }

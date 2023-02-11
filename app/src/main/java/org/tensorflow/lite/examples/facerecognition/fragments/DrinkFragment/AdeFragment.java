@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.facerecognition.fragments;
+package org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,46 +16,38 @@ import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
 
 import java.util.Locale;
 
-public class TeaFragment extends Fragment {
+public class AdeFragment extends Fragment {
     private TextToSpeech tts;
-    private Button button6;
+    private Button button7;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = (ViewGroup) inflater.inflate(
-                R.layout.fragment_tea, container, false);
+                R.layout.fragment_ade, container, false);
 
-        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                button6.setEnabled(true);
-                Locale locale = Locale.getDefault();
-                tts.setLanguage(locale);
-                String text = "사";
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
-            }
-        });
 
-        button6 = v.findViewById(R.id.button6);
-        button6.setOnClickListener(new View.OnClickListener() {
+
+        button7 = v.findViewById(R.id.button7);
+        button7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = "사";
+                String text = "에이드";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });
 
-        button6.setOnLongClickListener(new View.OnLongClickListener(){
+        button7.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
                 startActivity(intent);
 
+                //activity의 finish() 부분
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(TeaFragment.this).commit();
+                fragmentManager.beginTransaction().remove(AdeFragment.this).commit();
                 fragmentManager.popBackStack();
 
                 return true;  //true 설정
@@ -65,4 +57,30 @@ public class TeaFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                button7.setEnabled(true);
+                Locale locale = Locale.getDefault();
+                tts.setLanguage(locale);
+
+                String text = "오";
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(tts != null){
+            tts.stop();
+            tts.shutdown();
+            tts = null;
+        }
+    }
 }

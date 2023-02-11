@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:layout_margin="@dimen/pageMargin">
 
     <Button
         android:id="@+id/button0"
         android:layout_width="fill_parent"
         android:layout_height="0px"
         android:layout_weight="1"
-        android:text="화면을 눌러주세요"
+        android:text="화면을 터치해주세요"
         android:background="@color/yellow"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:fontFamily="@font/cafe"
-        android:textSize="@dimen/default_size">
+        android:textSize="@dimen/default_size"
+>
     </Button>
 
 </LinearLayout>

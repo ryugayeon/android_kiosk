@@ -5,13 +5,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import org.tensorflow.lite.examples.facerecognition.fragments.AdeFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.CoffeeFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.DesertFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.JuiceFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.LatteFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.SmoothieFragment;
-import org.tensorflow.lite.examples.facerecognition.fragments.TeaFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.AdeFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.CoffeeFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.DesertFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.JuiceFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.LatteFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.SmoothieFragment;
+import org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment.TeaFragment;
 
 
 public class Myadapter extends FragmentStateAdapter {

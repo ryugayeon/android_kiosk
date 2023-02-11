@@ -84,7 +84,6 @@ public class CameraFragment extends Fragment
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-
         Log.d(TAG, "⚽️ onCreateView");
         fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false);
 
@@ -339,10 +338,23 @@ public class CameraFragment extends Fragment
                 EditText etName = dialogLayout.findViewById(R.id.dlg_input);
                 ivFace.setImageBitmap(unknownFaces.get(0).first);
 
-                Intent intent = new Intent(getActivity(), StartActivity.class);
-                startActivity(intent);
-
+//                builder.setPositiveButton("Ok", (dialog, id) -> {
+//                            db.register(etName.getText().toString(), unknownFaces.get(0).second);
+//                            //                            db.setIsRegistering(false);
+//                            faceRecognitionPipeline.start();
+//                        })
+//                        .setNegativeButton("Cancel", (dialog, id) -> {
+//                            //                            db.setIsRegistering(false);
+//                            faceRecognitionPipeline.start();
+//                        })
+//                        .setView(dialogLayout).show();
             });
+
+
+
+            Intent intent = new Intent(getActivity(), StartActivity.class);
+            startActivity(intent);
+
         } catch (IllegalStateException e) {
             Log.e(TAG, e.toString());
         }

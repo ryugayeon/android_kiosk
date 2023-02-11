@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/pageMargin"
     android:orientation="vertical"
-    tools:context=".SelectDrinkActivity"
-    >
+    android:layout_margin="@dimen/pageMargin"
+    tools:context=".CoffeeActivity">
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewpager"
+        android:id="@+id/coffee_viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
@@ -18,12 +17,11 @@
         android:clipToPadding="false" />
 
     <me.relex.circleindicator.CircleIndicator3
-        android:id="@+id/indicator"
+        android:id="@+id/coffee_indicator"
         android:layout_width="fill_parent"
         android:layout_height="0px"
         android:layout_gravity="bottom">
 
     </me.relex.circleindicator.CircleIndicator3>
-
 
 </LinearLayout>

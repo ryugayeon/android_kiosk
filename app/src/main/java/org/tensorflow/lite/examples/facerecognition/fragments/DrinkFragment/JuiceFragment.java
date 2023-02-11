@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.facerecognition.fragments;
+package org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,17 +26,7 @@ public class JuiceFragment extends Fragment {
         View v = (ViewGroup) inflater.inflate(
                 R.layout.fragment_juice, container, false);
 
-        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                button8.setEnabled(true);
-                Locale locale = Locale.getDefault();
-                tts.setLanguage(locale);
 
-                String text = "육";
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
-            }
-        });
 
         button8 = v.findViewById(R.id.button8);
         button8.setOnClickListener(new View.OnClickListener() {
@@ -66,4 +56,29 @@ public class JuiceFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                button8.setEnabled(true);
+                Locale locale = Locale.getDefault();
+                tts.setLanguage(locale);
+
+                String text = "주스";
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(tts != null){
+            tts.stop();
+            tts.shutdown();
+            tts = null;
+        }
+    }
 }

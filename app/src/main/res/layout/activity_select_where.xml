@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:layout_margin="@dimen/pageMargin">
+
     <Button android:text="포장"
         android:id="@+id/button1"
         android:layout_width="fill_parent"
@@ -23,5 +25,6 @@
         android:textColor="@color/white"
         android:textStyle="bold"
         android:fontFamily="@font/cafe"
-        android:textSize="@dimen/default_size"></Button>
+        android:textSize="@dimen/default_size"
+        android:layout_marginTop="@dimen/pageMargin"></Button>
 </LinearLayout>

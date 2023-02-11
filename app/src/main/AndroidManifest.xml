@@ -10,16 +10,25 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_cafe"
+        android:theme="@style/Theme.AppCompat"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_cafe_round"
         android:supportsRtl="true"
         android:taskAffinity=""
         tools:ignore="AllowBackup">
         <activity
+            android:name=".CoffeeActivity"
+            android:exported="true"
+            android:theme="@style/FullScreenTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".SelectDrinkActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat">>
+            android:theme="@style/FullScreenTheme">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -27,7 +36,7 @@
         <activity
             android:name=".SelectWhereActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat">
+            android:theme="@style/FullScreenTheme">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -35,7 +44,7 @@
         <activity
             android:name=".StartActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat">
+            android:theme="@style/FullScreenTheme">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -53,6 +62,7 @@
             <!-- Main app intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
