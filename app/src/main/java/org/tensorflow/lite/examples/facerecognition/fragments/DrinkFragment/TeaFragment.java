@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager;
 
 import org.tensorflow.lite.examples.facerecognition.R;
 import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
+import org.tensorflow.lite.examples.facerecognition.TeaActivity;
 
 import java.util.Locale;
 
@@ -42,7 +43,7 @@ public class TeaFragment extends Fragment {
         button6.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
+                Intent intent = new Intent(getActivity(), TeaActivity.class);
                 startActivity(intent);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -65,7 +66,7 @@ public class TeaFragment extends Fragment {
                 button6.setEnabled(true);
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
-                String text = "사";
+                String text = "티";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });

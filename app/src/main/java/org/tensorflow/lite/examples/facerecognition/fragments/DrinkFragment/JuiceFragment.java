@@ -11,8 +11,8 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import org.tensorflow.lite.examples.facerecognition.JuiceActivity;
 import org.tensorflow.lite.examples.facerecognition.R;
-import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
 
 import java.util.Locale;
 
@@ -32,7 +32,7 @@ public class JuiceFragment extends Fragment {
         button8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = "육";
+                String text = "주스";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
@@ -42,7 +42,7 @@ public class JuiceFragment extends Fragment {
         button8.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
+                Intent intent = new Intent(getActivity(), JuiceActivity.class);
                 startActivity(intent);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();

@@ -35,7 +35,7 @@ public class SelectDrinkActivity extends FragmentActivity {
         //ViewPager Setting
         mPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
 
-        // mPager.setCurrentItem(1001);
+        mPager.setCurrentItem(1001,false);
         mPager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
 
         mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

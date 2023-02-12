@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.facerecognition.fragments;
+package org.tensorflow.lite.examples.facerecognition.fragments.CameraFragment;
 
 import android.Manifest;
 import android.content.Context;

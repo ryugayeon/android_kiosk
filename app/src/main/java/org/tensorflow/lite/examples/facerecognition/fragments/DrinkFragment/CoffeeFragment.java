@@ -67,7 +67,7 @@ public class CoffeeFragment extends Fragment {
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
 
-                String text = "일";
+                String text = "커피";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });

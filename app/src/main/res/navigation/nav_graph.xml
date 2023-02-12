@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="org.tensorflow.lite.examples.facerecognition.fragments.PermissionsFragment"
+        android:name="org.tensorflow.lite.examples.facerecognition.fragments.CameraFragment.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="org.tensorflow.lite.examples.facerecognition.fragments.CameraFragment"
+        android:name="org.tensorflow.lite.examples.facerecognition.fragments.CameraFragment.CameraFragment"
         android:label="CameraFragment">
 
         <action

@@ -37,7 +37,7 @@ public class CoffeeActivity extends AppCompatActivity {
         //ViewPager Setting
         mPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
 
-        // mPager.setCurrentItem(1001);
+        mPager.setCurrentItem(1000,false);
         mPager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
 
         mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

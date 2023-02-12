@@ -11,6 +11,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import org.tensorflow.lite.examples.facerecognition.AdeActivity;
 import org.tensorflow.lite.examples.facerecognition.R;
 import org.tensorflow.lite.examples.facerecognition.SelectWhereActivity;
 
@@ -42,7 +43,7 @@ public class AdeFragment extends Fragment {
         button7.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(getActivity(), SelectWhereActivity.class);
+                Intent intent = new Intent(getActivity(), AdeActivity.class);
                 startActivity(intent);
 
                 //activity의 finish() 부분
@@ -67,7 +68,7 @@ public class AdeFragment extends Fragment {
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
 
-                String text = "오";
+                String text = "에이드";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
             }
         });
