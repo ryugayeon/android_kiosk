@@ -2,6 +2,7 @@ package org.tensorflow.lite.examples.facerecognition;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
@@ -15,6 +16,10 @@ public class StartActivity extends AppCompatActivity {
     private TextToSpeech tts;              // TTS 변수 선언
     private Button button0;
 
+    //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+    private int count = TimerCount.COUNT;
+    private CountDownTimer countDownTimer;
+
     Handler handler = new Handler();
 
     @Override
@@ -23,6 +28,9 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         button0 = (Button) findViewById(R.id.button0);
+
+        countDownTimer();
+        countDownTimer.start();
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -42,7 +50,7 @@ public class StartActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }
-                }, 18000);// 5초 정도 딜레이를 준 후 시작
+                }, 18000);// 18초 정도 딜레이를 준 후 시작
             }
         });
 
@@ -51,6 +59,11 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 handler.removeMessages(0);
+
+                //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+                countDownTimer.cancel();
+                countDownTimer.start();
+
                 String text = "테스트입니다";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
@@ -72,12 +85,35 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
+    //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+    public void countDownTimer(){
+
+        countDownTimer = new CountDownTimer(TimerCount.MILLISINFUTURE, TimerCount.COUNT_DOWN_INTERVAL) {
+            public void onTick(long millisUntilFinished) {
+                count --;
+            }
+            public void onFinish() {
+                Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+        };
+    }
+
     @Override
     protected void onDestroy() {
         if (tts != null) {
             tts.stop();
             tts.shutdown();
         }
+
+        //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+        try{
+            countDownTimer.cancel();
+        } catch (Exception e) {}
+        countDownTimer=null;
+
         super.onDestroy();
     }
 
