@@ -2,6 +2,7 @@ package org.tensorflow.lite.examples.facerecognition.fragments.DrinkFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.tensorflow.lite.examples.facerecognition.CoffeeActivity;
+import org.tensorflow.lite.examples.facerecognition.MainActivity;
 import org.tensorflow.lite.examples.facerecognition.R;
+import org.tensorflow.lite.examples.facerecognition.StartActivity;
+import org.tensorflow.lite.examples.facerecognition.TimerCount;
 
 import java.util.Locale;
 
@@ -26,8 +30,8 @@ public class CoffeeFragment extends Fragment {
         View v = (ViewGroup) inflater.inflate(
                 R.layout.fragment_coffee, container, false);
 
-
         button3 = v.findViewById(R.id.button3);
+
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,6 +39,7 @@ public class CoffeeFragment extends Fragment {
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
+
             }
         });
 
@@ -69,6 +74,7 @@ public class CoffeeFragment extends Fragment {
 
                 String text = "커피";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "id1");
+
             }
         });
 
@@ -82,5 +88,7 @@ public class CoffeeFragment extends Fragment {
             tts.shutdown();
             tts = null;
         }
+
+        super.onDestroy();
     }
 }

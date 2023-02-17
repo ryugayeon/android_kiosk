@@ -7,18 +7,23 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 
 import me.relex.circleindicator.CircleIndicator3;
 
 public class CoffeeActivity extends AppCompatActivity {
 
-
     private ViewPager2 mPager;
     private FragmentStateAdapter pagerAdapter;
     private int num_page = 10;
     private CircleIndicator3 mIndicator;
+
+    //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+    private int count = TimerCount.COUNT;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,9 @@ public class CoffeeActivity extends AppCompatActivity {
         mPager.setCurrentItem(1000,false);
         mPager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
 
+        countDownTimer();
+        countDownTimer.start();
+
         mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -54,7 +62,6 @@ public class CoffeeActivity extends AppCompatActivity {
                 super.onPageSelected(position);
                 mIndicator.animatePageSelected(position%num_page);
             }
-
         });
 
         final float pageMargin= getResources().getDimensionPixelOffset(R.dimen.pageMargin);
@@ -75,6 +82,28 @@ public class CoffeeActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void countDownTimer(){
+        countDownTimer = new CountDownTimer(TimerCount.MILLISINFUTURE, TimerCount.COUNT_DOWN_INTERVAL) {
+            public void onTick(long millisUntilFinished) {
+                count --;
+            }
+            public void onFinish() {
+                Intent intent = new Intent(CoffeeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
 
+            }
+        };
+    }
+    @Override
+    protected void onDestroy() {
+        //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+        try{
+            countDownTimer.cancel();
+        } catch (Exception e) {}
+        countDownTimer=null;
+
+        super.onDestroy();
     }
 }
