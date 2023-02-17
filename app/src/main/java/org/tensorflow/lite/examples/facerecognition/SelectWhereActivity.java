@@ -2,6 +2,7 @@ package org.tensorflow.lite.examples.facerecognition;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,10 @@ public class SelectWhereActivity extends AppCompatActivity {
     private Button button1;
     private Button button2;
 
+    //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+    private int count = TimerCount.COUNT;
+    private CountDownTimer countDownTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +28,9 @@ public class SelectWhereActivity extends AppCompatActivity {
 
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
+
+        countDownTimer();
+        countDownTimer.start();
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -39,6 +47,11 @@ public class SelectWhereActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+                countDownTimer.cancel();
+                countDownTimer.start();
+
                 String text = "포장";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
@@ -59,6 +72,11 @@ public class SelectWhereActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+                countDownTimer.cancel();
+                countDownTimer.start();
+
                 String text = "매장";
                 Locale locale = Locale.getDefault();
                 tts.setLanguage(locale);
@@ -76,4 +94,38 @@ public class SelectWhereActivity extends AppCompatActivity {
             }
         });
     }
+
+    //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+    public void countDownTimer(){
+
+        countDownTimer = new CountDownTimer(TimerCount.MILLISINFUTURE, TimerCount.COUNT_DOWN_INTERVAL) {
+            public void onTick(long millisUntilFinished) {
+                count --;
+            }
+            public void onFinish() {
+                Intent intent = new Intent(SelectWhereActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+        };
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+
+        //일정 시간 터치 없을시 자동 처음 화면 돌아가기 위한 코드
+        try{
+            countDownTimer.cancel();
+        } catch (Exception e) {}
+        countDownTimer=null;
+
+        super.onDestroy();
+    }
 }
+
